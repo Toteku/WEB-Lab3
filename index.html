@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>2048 - Таблица лидеров</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="game-title">
+                <h1 class="title">2048</h1>
+                <p class="subtitle">Объединяй числа и получи плитку <strong>2048!</strong></p>
+            </div>
+            
+            <div class="game-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Счет</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Рекорд</div>
+                    <div class="stat-value" id="best">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Ходов</div>
+                    <div class="stat-value" id="moves">0</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-controls">
+            <div class="controls-group">
+                <button class="btn btn-new-game" id="new-game">
+                    <i class="fas fa-plus"></i> Новая игра
+                </button>
+                <button class="btn btn-undo" id="undo-btn" disabled>
+                    <i class="fas fa-undo"></i> Отменить ход
+                </button>
+                <button class="btn btn-leaderboard" id="leaderboard-btn">
+                    <i class="fas fa-trophy"></i> Таблица лидеров
+                </button>
+            </div>
+            <div class="undo-info" id="undo-hint">
+                Можно отменить: <span id="undo-count">0</span> ход
+            </div>
+        </div>
+
+        <div class="game-container">
+            <div class="game-message" id="game-message">
+                <p id="message-text"></p>
+                <div class="message-buttons">
+                    <button class="btn btn-continue" id="continue-btn">Продолжить</button>
+                    <button class="btn btn-try-again" id="try-again-btn">Попробовать снова</button>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </div>
+
+            <div class="tile-container" id="tile-container"></div>
+        </div>
+
+        <div class="mobile-controls">
+            <div class="control-row">
+                <button class="control-btn" id="up-btn" aria-label="Вверх">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+            </div>
+            <div class="control-row">
+                <button class="control-btn" id="left-btn" aria-label="Влево">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="control-btn" id="down-btn" aria-label="Вниз">
+                    <i class="fas fa-arrow-down"></i>
+                </button>
+                <button class="control-btn" id="right-btn" aria-label="Вправо">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h2><i class="fas fa-gamepad"></i> Как играть:</h2>
+            <p>Используй <strong>клавиши со стрелками</strong> или кнопки ниже для движения плиток. Когда две плитки с одинаковым числом соприкасаются, они <strong>объединяются в одну!</strong></p>
+            
+            <div class="keyboard-hints">
+                <div class="hint">
+                    <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>
+                    <span>Стрелки для движения</span>
+                </div>
+                <div class="hint">
+                    <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>
+                    <span>WASD для движения</span>
+                </div>
+                <div class="hint">
+                    <kbd>R</kbd>
+                    <span>Новая игра</span>
+                </div>
+                <div class="hint">
+                    <kbd>Ctrl + Z</kbd>
+                    <span>Отменить ход</span>
+                </div>
+            </div>
+            
+            <p class="undo-info">
+                <i class="fas fa-info-circle"></i> Можно отменить <strong>1 предыдущий ход</strong>. Нельзя отменять два хода подряд.
+            </p>
+        </div>
+
+        <footer class="footer">
+            <p>Основано на оригинальной игре 2048</p>
+            <p>Модернизированная версия с таблицей лидеров и отменой хода.</p>
+        </footer>
+    </div>
+
+    <!-- Модальное окно таблицы лидеров -->
+    <dialog class="leaderboard-modal" id="leaderboard-modal">
+        <div class="modal-content">
+            <button class="close-button modal-close" id="close-leaderboard">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2><i class="fas fa-trophy"></i> Таблица лидеров</h2>
+            
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <div class="rank">#</div>
+                    <div class="name">Имя</div>
+                    <div class="score">Счет</div>
+                    <div class="date">Дата</div>
+                </div>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <!-- Записи будут добавляться через JS -->
+                    <div class="leaderboard-empty" id="leaderboard-empty">
+                        <i class="fas fa-trophy"></i>
+                        <p>Таблица лидеров пуста</p>
+                        <p>Сыграйте игру, чтобы попасть в таблицу!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="leaderboard-stats">
+                <div class="stat">
+                    <div class="stat-label">Всего игр</div>
+                    <div class="stat-value" id="total-games">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Средний счет</div>
+                    <div class="stat-value" id="average-score">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Лучший счет</div>
+                    <div class="stat-value" id="modal-best-score">0</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-clear-leaderboard" id="clear-leaderboard">
+                <i class="fas fa-trash"></i> Очистить таблицу
+            </button>
+        </div>
+    </dialog>
+
+    <!-- Модальное окно для ввода имени после игры -->
+    <dialog class="name-input-modal" id="name-input-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-plus"></i> Вы попали в таблицу лидеров!</h2>
+            <p class="score-display">Ваш счет: <span id="final-score">0</span></p>
+            
+            <form id="name-form">
+                <div class="form-group">
+                    <label for="player-name">Введите ваше имя:</label>
+                    <input type="text" id="player-name" name="player-name" 
+                    placeholder="Игрок" maxlength="20" required>
+                    <div class="char-counter">Максимум 20 символов</div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-check"></i> Сохранить
+                    </button>
+                    <button type="button" class="btn btn-cancel" id="cancel-name">
+                        <i class="fas fa-times"></i> Пропустить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script src="js/tile.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/storage_manager.js"></script>
+    <script src="js/leaderboard.js"></script>    <!-- ДО game_manager.js -->
+    <script src="js/undo_manager.js"></script>
+    <script src="js/actuator.js"></script>
+    <script src="js/input_manager.js"></script>
+    <script src="js/game_manager.js"></script>   <!-- ПОСЛЕ leaderboard.js -->
+    <script src="js/application.js"></script>
+</body>
+</html>
